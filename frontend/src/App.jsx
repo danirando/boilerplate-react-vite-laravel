@@ -11,6 +11,7 @@ function App() {
   const [weight, setWeight] = useState(75)
   const [gender, setGender] = useState('male')
   const [showSettings, setShowSettings] = useState(false)
+  const [showResetModal, setShowResetModal] = useState(false)
 
   // Presets configuration
   const presets = {
@@ -67,6 +68,11 @@ function App() {
 
   const removeDrink = (id) => {
     setHistory(history.filter(item => item.id !== id))
+  }
+
+  const clearHistory = () => {
+    setHistory([])
+    setShowResetModal(false)
   }
 
   const totals = useMemo(() => {
@@ -180,7 +186,14 @@ function App() {
         <div className="card history-panel">
           <header className="history-header">
             <div className="summary-main">
-              <h2>Riepilogo Giornaliero</h2>
+              <div className="header-top">
+                <h2>Cronologia</h2>
+                {history.length > 0 && (
+                  <button className="reset-btn" onClick={() => setShowResetModal(true)}>
+                    Svuota 🗑️
+                  </button>
+                )}
+              </div>
               <div className="summary-badges">
                 <div className="total-badge">
                   <span className="total-label">Totale Calorie</span>
@@ -215,8 +228,8 @@ function App() {
                   </div>
                   <div className="item-kcal">
                     <span>{item.kcal} kcal</span>
-                    <button className="delete-btn" onClick={() => removeDrink(item.id)}>✕</button>
                   </div>
+                  <button className="delete-btn" onClick={() => removeDrink(item.id)}>✕</button>
                 </div>
               ))
             )}
@@ -227,6 +240,21 @@ function App() {
           </footer>
         </div>
       </div>
+
+      {/* Reset Confirmation Modal */}
+      {showResetModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-icon">⚠️</div>
+            <h3>Svuota Cronologia</h3>
+            <p>Sei sicuro di voler eliminare tutti i drink registrati? Questa azione non può essere annullata.</p>
+            <div className="modal-actions">
+              <button className="modal-btn cancel" onClick={() => setShowResetModal(false)}>Annulla</button>
+              <button className="modal-btn confirm" onClick={clearHistory}>Svuota tutto</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
